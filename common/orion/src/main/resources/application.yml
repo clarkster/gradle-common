@@ -1,0 +1,5 @@
+security:
+  user.name: orion
+  basic.enabled: false
+
+management.security.enabled: false

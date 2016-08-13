@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+//apply plugin: 'com.gorylenko.gradle-git-properties'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+configurations {
+    compile.exclude module: 'spring-boot-starter-tomcat'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web')
+    compile('org.apache.httpcomponents:httpclient:4.3.4')
+    compile('org.springframework.boot:spring-boot-starter-actuator')
+    compile('org.springframework.boot:spring-boot-starter-undertow')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile project(':common:orion')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+test.dependsOn(":common:orion:test")

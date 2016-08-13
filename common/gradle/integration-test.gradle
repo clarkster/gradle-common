@@ -1,0 +1,28 @@
+sourceSets {
+    integrationTest { sourceSet ->
+        ["java", "groovy", "scala", "resources"].each {
+            if (!sourceSet.hasProperty(it)) return
+            sourceSet."$it".srcDir file("src/integration/${it}")
+        }
+    }
+}
+
+task integrationTest(type: Test) {
+    testClassesDir = sourceSets.integrationTest.output.classesDir
+    classpath = sourceSets.integrationTest.runtimeClasspath
+}
+
+dependencies {
+    integrationTestCompile sourceSets.main.output
+    integrationTestCompile sourceSets.test.output
+    integrationTestCompile configurations.testCompile
+    integrationTestRuntime configurations.testRuntime
+
+    integrationTestCompile "com.github.tomakehurst:wiremock-standalone:2.1.10"
+    integrationTestCompile "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+    integrationTestCompile "org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}"
+    integrationTestCompile project(':common:integration-test')
+}
+
+integrationTest.mustRunAfter test
+check.dependsOn integrationTest

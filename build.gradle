@@ -1,0 +1,6 @@
+buildscript {
+    apply from: "common/gradle/orion-springboot-buildscript.gradle"
+}
+apply from: "common/gradle/orion-springboot-common.gradle"
+apply from: "common/gradle/integration-test.gradle"
+apply from: "common/gradle/code-quality.gradle"

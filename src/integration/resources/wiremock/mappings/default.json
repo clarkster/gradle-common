@@ -1,0 +1,15 @@
+{
+  "request":
+  {
+    "url": "/downstream",
+    "method": "GET"
+  },
+
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "greeting.json"
+  }
+}

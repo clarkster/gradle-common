@@ -1,0 +1,14 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pstauffer/curl
+    tag: "latest"
+
+
+run:
+  path: sh
+  args:
+  - -c
+  - echo "Integration tests successful"

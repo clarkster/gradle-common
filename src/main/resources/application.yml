@@ -1,0 +1,11 @@
+
+security:
+  user.name: orion
+  basic.enabled: false
+
+management.security.enabled: false
+
+# Timeout for downstream API calls
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 15000
+
+proxy.url: http://google.com

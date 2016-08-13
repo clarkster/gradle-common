@@ -1,0 +1,26 @@
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: pierrevincent/gradle-java8
+    tag: latest
+
+inputs:
+  - name: git-repo
+  - name: version
+
+outputs:
+  - name: artifact-dir
+
+run:
+  path: sh
+  args:
+  - -c
+  - |
+    gradle --build-file git-repo/build.gradle assemble -PVersion=`cat version/number`
+    cp git-repo/build/libs/*.jar artifact-dir/
+
+params:
+  TERM: -dumb
+  GRADLE_OPTS: -Dorg.gradle.native=false

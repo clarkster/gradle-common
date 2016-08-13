@@ -1,0 +1,24 @@
+project.ext {
+    SPRING_BOOT_VERION = '1.4.0.RELEASE'
+}
+
+// export to parent project too
+ext {
+    SPRING_BOOT_VERSION = "${SPRING_BOOT_VERION}"
+}
+
+def ourRepos = {
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+def ourDependencies = {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${SPRING_BOOT_VERION}")
+    classpath "gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17"
+}
+
+project.buildscript.repositories(ourRepos)
+project.buildscript.dependencies(ourDependencies)
+

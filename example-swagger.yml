@@ -1,0 +1,70 @@
+swagger: '2.0'
+info:
+ title: Demo
+ description: Demo
+ version: "1.0.0"
+host: "localhost:8080"
+produces:
+ - application/json
+schemes:
+ - http
+paths:
+ /greet/{name}:
+  get:
+    description: Greets the caller
+    parameters:
+       - name: name
+         in: path
+         type: string
+         description: Caller name
+         required: true
+    responses:
+         200:
+           description: Successful response
+           schema:
+             $ref: '#/definitions/greeting'
+         400:
+           description: Bad Request
+           schema:
+             $ref: '#/definitions/Errors'
+ /proxy:
+  get:
+    description: Proxy greeting
+    responses:
+         200:
+           description: Successful response
+           schema:
+             $ref: '#/definitions/greeting'
+         400:
+           description: Bad Request
+           schema:
+             $ref: '#/definitions/Errors'
+
+definitions:
+  greeting:
+    type: object
+    required:
+      - Hello
+    properties:
+      Hello:
+        type: string
+
+  Errors:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/definitions/Error'
+      required:
+        - errors
+
+  Error:
+    type: object
+    properties:
+      key:
+        type: string
+        description: An error key for the error.
+      message:
+        type: string
+        description: A message describing the error

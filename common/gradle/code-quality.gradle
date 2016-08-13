@@ -1,0 +1,35 @@
+apply plugin: 'checkstyle'
+apply plugin: 'findbugs'
+
+checkstyle {
+    ignoreFailures = false
+    toolVersion = '6.1'
+    config = resources.text.fromFile('common/codequality/checkstyle.xml')
+}
+
+// The findBugs task is a bit of a pain - it doesn't tell you what the problem is so you have to go fishing
+// in the build reports. Instead we use our own finalization task to parse out that report into an exception
+// message
+tasks.create("checkFindBugsReport") << {
+    def report = findbugsMain.reports.xml
+    def xml = new XmlParser().parse(report.destination)
+    def bugs = xml.BugInstance
+    if (bugs.size() > 0) {
+        System.err.println("Find bugs found " + bugs.size() + " issues. More info at " + report.destination)
+        def infos = bugs.collect { bug ->
+            'Error ' + bug.'@type' +
+                    ' in ' + bug.Class.SourceLine.'@sourcefile' +
+                    ' line ' + bug.Class.SourceLine.'@start'
+        }
+        throw new Exception(infos.join('/n'))
+    }
+}
+
+findbugs {
+    ignoreFailures = true
+    sourceSets = [sourceSets.main]
+}
+
+tasks.withType(FindBugs) {
+    finalizedBy = ['checkFindBugsReport']
+}

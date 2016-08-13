@@ -1,0 +1,155 @@
+# Concouse CI Pipeline definition for Orion
+resource_types:
+- name: slack-notification
+  type: docker-image
+  source:
+    repository: cfcommunity/slack-notification-resource
+    tag: latest
+
+jobs:
+  - name: check
+    plan:
+    - get: git-repo
+      trigger: true
+    - task: unit
+      file: git-repo/common/concourse/tasks/check.yml
+
+  - name: build
+    serial_groups: [version]
+    serial: true
+    plan:
+    - get: git-repo
+      passed: [check]
+      trigger: true
+    - get: version
+      params: { bump: patch }
+    - task: build
+      file: git-repo/common/concourse/tasks/build.yml
+      timeout: 5m
+    - put: release-candidate
+      params:
+        file: artifact-dir/orion*.jar
+    - put: version
+      params: {file: version/number}
+
+  - name: smoke-test
+    serial_groups: [version]
+    plan:
+    - aggregate:
+      - get: version
+        passed: [build]
+        trigger: true
+      - get: release-candidate
+        passed: [build]
+      - get: git-repo
+        passed: [build]
+    - put: deploy-dev-space
+      params:
+        manifest: git-repo/infra/cloudfoundry/dev/manifest.yml
+        current_app_name: {{APP_NAME_DEV}}
+        path: release-candidate/*.jar
+    - task: smoke-test
+      file: git-repo/common/concourse/tasks/smoke-test.yml
+
+  - name: promote-to-lower-envs
+    serial_groups: [version]
+    plan:
+    - aggregate:
+      - get: release-candidate
+        passed: [smoke-test]
+        trigger: true
+      - get: version
+        passed: [smoke-test]
+      - get: git-repo
+        passed: [smoke-test]
+    - put: deploy-dev-space
+      params:
+        manifest: git-repo/infra/cloudfoundry/stage/manifest.yml
+        current_app_name: {{APP_NAME_STAGE}}
+        path: release-candidate/*.jar
+    - put: deploy-dev-space
+      params:
+        manifest: git-repo/infra/cloudfoundry/sit2/manifest.yml
+        current_app_name: {{APP_NAME_SIT2}}
+        path: release-candidate/*.jar
+
+  - name: manual-ship-it
+    serial_groups: [version]
+    serial: true
+    plan:
+    - aggregate:
+      - get: release-candidate
+        passed: [promote-to-lower-envs]
+      - get: version
+        passed: [promote-to-lower-envs]
+      - get: git-repo
+        passed: [promote-to-lower-envs]
+    - task: prepare-final
+      file: git-repo/common/concourse/tasks/prepare-final.yml
+    - put: production-release
+      params:
+        file: final-dir/orion*.jar
+    - put: deploy-prod-space
+      params:
+        manifest: git-repo/infra/cloudfoundry/prod/manifest.yml
+        current_app_name: {{APP_NAME_PROD}}
+        path: final-dir/*.jar
+
+resources:
+- name: git-repo
+  type: git
+  source:
+    uri: {{GIT_REPO}}
+    branch: master
+    private_key: {{GIT_PRIVATE_KEY}}
+
+- name: deploy-dev-space
+  type: cf
+  source:
+    api: {{CF_API}}
+    username: {{CF_USER}}
+    password: {{CF_PASS}}
+    organization: {{CF_TEST_ORG}}
+    space: {{CF_TEST_SPACE}}
+
+- name: deploy-prod-space
+  type: cf
+  source:
+    api: {{CF_API}}
+    username: {{CF_USER}}
+    password: {{CF_PASS}}
+    organization: {{CF_PROD_ORG}}
+    space: {{CF_PROD_SPACE}}
+
+- name: version
+  type: semver
+  source:
+    bucket: {{S3_BUCKET}}
+    key: pipeline-artifacts/current-version
+    region_name: {{S3_REGION}}
+    access_key_id: {{S3_ACCESS_KEY_ID}}
+    secret_access_key: {{S3_SECRET_ACCESS_KEY}}
+    initial_version: 1.0.0
+
+- name: release-candidate
+  type: s3
+  source:
+    bucket: {{S3_BUCKET}}
+    regexp: pipeline-artifacts/orion-product-service-(.*).jar
+    region_name: {{S3_REGION}}
+    access_key_id: {{S3_ACCESS_KEY_ID}}
+    secret_access_key: {{S3_SECRET_ACCESS_KEY}}
+
+- name: production-release
+  type: s3
+  source:
+    bucket: {{S3_BUCKET}}
+    regexp: deployments/orion-product-service-(.*).jar
+    region_name: {{S3_REGION}}
+    access_key_id: {{S3_ACCESS_KEY_ID}}
+    secret_access_key: {{S3_SECRET_ACCESS_KEY}}
+
+- name: slack-alert
+  type: slack-notification
+  source:
+    url: {{SLACK_HOOK}}
