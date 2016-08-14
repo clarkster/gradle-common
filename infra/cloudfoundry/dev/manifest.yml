@@ -1,0 +1,10 @@
+---
+applications:
+  - name: orion-category-assembly-dev
+    buildpack: https://github.com/cloudfoundry/java-buildpack.git#v3.7
+    path: build/libs/*.jar
+    memory: 512MB
+    instances: 1
+    env:
+        PROXY_URL: http://bbc.com
+        SPRING_PROFILES_ACTIVE: production
