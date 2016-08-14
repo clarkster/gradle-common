@@ -3,5 +3,6 @@ buildscript {
 }
 
 apply from: "common/gradle/orion-springboot-common.gradle"
-apply from: "common/gradle/integration-test.gradle"
+apply from: "common/gradle/integration-test-task.gradle"
 apply from: "common/gradle/code-quality.gradle"
+apply from: "common/gradle/integration-test-dependencies.gradle"

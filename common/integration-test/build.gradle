@@ -1,17 +1,35 @@
+apply plugin: 'base'
 apply plugin: 'java'
+apply from: "../gradle/integration-test-task.gradle"
 
 repositories {
     mavenCentral()
 }
 
+task integrationJar(type: Jar) {
+    baseName = project.name + '-it'
+    from sourceSets.integrationTest.output
+    from { configurations.integrationTestCompile.collect { it.isDirectory() ? it : zipTree(it) } }
+//    with jar
+}
+
+configurations {
+    integrationDist
+}
+
+artifacts {
+    integrationDist integrationJar
+}
+
+
 dependencies {
-    compile "com.github.tomakehurst:wiremock-standalone:2.1.10"
-    compile "io.swagger:swagger-parser:1.0.22"
-    compile "com.github.fge:json-schema-validator:2.2.6"
-    compile "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
-    compile "org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}"
+    integrationTestCompile "com.github.tomakehurst:wiremock-standalone:2.1.10"
+    integrationTestCompile "io.swagger:swagger-parser:1.0.22"
+    integrationTestCompile "com.github.fge:json-schema-validator:2.2.6"
+    integrationTestCompile "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+    integrationTestCompile "org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}"
 
     dependencies {
-        compile fileTree(dir: 'libs', include: ['*.jar'])
+        integrationTestCompile fileTree(dir: 'libs', include: ['*.jar'])
     }
 }

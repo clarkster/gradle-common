@@ -1,0 +1,11 @@
+dependencies {
+    integrationTestCompile sourceSets.main.output
+    integrationTestCompile sourceSets.test.output
+    integrationTestCompile configurations.testCompile
+    integrationTestRuntime configurations.testRuntime
+
+    integrationTestCompile "com.github.tomakehurst:wiremock-standalone:2.1.10"
+    integrationTestCompile "org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}"
+    integrationTestCompile "org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}"
+    integrationTestCompile  project(path: ':common:integration-test', configuration: 'integrationDist')
+}

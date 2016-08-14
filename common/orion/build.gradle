@@ -1,8 +1,15 @@
 buildscript {
     apply from: "../gradle/orion-springboot-buildscript.gradle"
 }
-
 apply plugin: 'java'
+
+apply plugin: 'checkstyle'
+
+checkstyle {
+    ignoreFailures = false
+    toolVersion = '6.1'
+    config = resources.text.fromFile('../codequality/checkstyle.xml')
+}
 
 repositories {
     mavenCentral()

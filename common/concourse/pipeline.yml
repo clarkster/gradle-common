@@ -28,7 +28,7 @@ jobs:
       timeout: 5m
     - put: release-candidate
       params:
-        file: artifact-dir/orion*.jar
+        file: artifact-dir/*.jar
     - put: version
       params: {file: version/number}
 
@@ -135,7 +135,7 @@ resources:
   type: s3
   source:
     bucket: {{S3_BUCKET}}
-    regexp: pipeline-artifacts/orion-product-service-(.*).jar
+    regexp: {{S3_CANDIDATE_REGEXP}}
     region_name: {{S3_REGION}}
     access_key_id: {{S3_ACCESS_KEY_ID}}
     secret_access_key: {{S3_SECRET_ACCESS_KEY}}
@@ -144,7 +144,7 @@ resources:
   type: s3
   source:
     bucket: {{S3_BUCKET}}
-    regexp: deployments/orion-product-service-(.*).jar
+    regexp: {{S3_RELEASE_REGEXP}}
     region_name: {{S3_REGION}}
     access_key_id: {{S3_ACCESS_KEY_ID}}
     secret_access_key: {{S3_SECRET_ACCESS_KEY}}

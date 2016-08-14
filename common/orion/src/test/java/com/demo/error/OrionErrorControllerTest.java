@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OrionErrorControllerTest {
 
     @RestController
@@ -28,7 +28,7 @@ public class OrionErrorControllerTest {
             return "Hello";
         }
 
-        @RequestMapping(path="/wrapErr", method=RequestMethod.GET)
+        @RequestMapping(path = "/wrapErr", method = RequestMethod.GET)
         public String err() {
             throw new OrionException(HttpStatus.I_AM_A_TEAPOT, "Short and stout");
         }
@@ -70,13 +70,15 @@ public class OrionErrorControllerTest {
 
     @Test
     public void notPermittedResponseCode() {
-        assertThat(this.restTemplate.postForEntity("/wrapErr", new ErrorMessage("", ""), ErrorMessage.class).getStatusCode())
+        assertThat(this.restTemplate.postForEntity("/wrapErr",
+                                                   new ErrorMessage("", ""), ErrorMessage.class).getStatusCode())
                 .isEqualTo(HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Test
     public void notPermittedResponseObject() {
-        ErrorMessage message = this.restTemplate.postForObject("/wrapErr", new ErrorMessage("", ""), ErrorMessage.class);
+        ErrorMessage message = this.restTemplate.postForObject("/wrapErr",
+                                                               new ErrorMessage("", ""), ErrorMessage.class);
         assertThat(message.getErrors().size()).isEqualTo(1);
         assertThat(message.getErrors().get(0).getKey()).isEqualTo("Method Not Allowed");
         assertThat(message.getErrors().get(0).getMessage()).isEqualTo("Request method 'POST' not supported");
