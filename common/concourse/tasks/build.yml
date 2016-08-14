@@ -19,6 +19,7 @@ run:
   - -c
   - |
     cd git-repo
+    gradle check
     gradle assemble -PVersion=`cat version/number`
     cp build/libs/*.jar ../artifact-dir/
 

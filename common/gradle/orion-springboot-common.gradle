@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'spring-boot'
-//apply plugin: 'com.gorylenko.gradle-git-properties'
+apply plugin: 'com.gorylenko.gradle-git-properties'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -11,14 +11,6 @@ configurations {
 
 repositories {
     mavenCentral()
-}
-
-if (!project.hasProperty("Version")) {
-    ext.Version = "0.0.1-SNAPSHOT"
-}
-
-jar {
-    version = "$Version"
 }
 
 dependencies {

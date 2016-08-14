@@ -7,13 +7,6 @@ resource_types:
     tag: latest
 
 jobs:
-  - name: check
-    plan:
-    - get: git-repo
-      trigger: true
-    - task: unit
-      file: git-repo/common/concourse/tasks/check.yml
-
   - name: build
     serial_groups: [version]
     serial: true
