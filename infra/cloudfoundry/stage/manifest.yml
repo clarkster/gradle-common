@@ -1,6 +1,6 @@
 ---
 applications:
-  - name: use-gradle-common-2-dev
+  - name: use-gradle-common-stage
     buildpack: https://github.com/cloudfoundry/java-buildpack.git#v3.7
     path: build/libs/*.jar
     memory: 512MB
