@@ -18,8 +18,9 @@ run:
   args:
   - -c
   - |
-    gradle --build-file git-repo/build.gradle assemble -PVersion=`cat version/number`
-    cp git-repo/build/libs/*.jar artifact-dir/
+    cd git-repo
+    gradle assemble -PVersion=`cat version/number`
+    cp build/libs/*.jar ../artifact-dir/
 
 params:
   TERM: -dumb

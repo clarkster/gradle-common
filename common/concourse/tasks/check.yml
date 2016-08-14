@@ -13,7 +13,9 @@ run:
   path: sh
   args:
   - -c
-  - gradle --build-file git-repo/build.gradle check
+  - |
+    cd git-repo
+    gradle check
 
 params:
   TERM: -dumb
