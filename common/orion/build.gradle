@@ -21,7 +21,7 @@ configurations {
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web:${SPRING_BOOT_VERSION}")
-    compile('org.springframework.boot:spring-boot-starter-undertow')
+    compile('org.springframework.boot:spring-boot-starter-undertow:${SPRING_BOOT_VERSION}"')
 
     testCompile("org.springframework.boot:spring-boot-starter-test:${SPRING_BOOT_VERSION}")
 

@@ -12,7 +12,6 @@ jobs:
     serial: true
     plan:
     - get: git-repo
-      passed: [check]
       trigger: true
     - get: version
       params: { bump: patch }
