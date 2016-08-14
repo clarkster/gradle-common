@@ -21,7 +21,7 @@ run:
     cd git-repo
     gradle check
     gradle assemble -PVersion=`cat version/number`
-    cp build/libs/*.jar ../artifact-dir/
+    find build/libs -type f -name "*.jar" -exec sh -c 'mkdir `basename "$0" .jar`; cp $0 `basename "$0" .jar`/`basename "$0"`' '{}' \;
 
 params:
   TERM: -dumb

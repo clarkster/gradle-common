@@ -116,8 +116,8 @@ resources:
 - name: version
   type: semver
   source:
-    bucket: {{S3_BUCKET}}
-    key: pipeline-artifacts/current-version
+    bucket: {{S3_CANDITATE_BUCKET}}
+    key: version
     region_name: {{S3_REGION}}
     access_key_id: {{S3_ACCESS_KEY_ID}}
     secret_access_key: {{S3_SECRET_ACCESS_KEY}}
@@ -126,7 +126,7 @@ resources:
 - name: release-candidate
   type: s3
   source:
-    bucket: {{S3_BUCKET}}
+    bucket: {{S3_CANDITATE_BUCKET}}
     regexp: {{S3_CANDIDATE_REGEXP}}
     region_name: {{S3_REGION}}
     access_key_id: {{S3_ACCESS_KEY_ID}}
@@ -135,7 +135,7 @@ resources:
 - name: production-release
   type: s3
   source:
-    bucket: {{S3_BUCKET}}
+    bucket: {{S3_RELEASE_BUCKET}}
     regexp: {{S3_RELEASE_REGEXP}}
     region_name: {{S3_REGION}}
     access_key_id: {{S3_ACCESS_KEY_ID}}

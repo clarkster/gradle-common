@@ -13,13 +13,6 @@ repositories {
     mavenCentral()
 }
 
-if (!project.hasProperty("Version")) {
-    ext.Version = "0.0.1"
-}
-
-jar {
-    version = "$Version"
-}
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-web')
